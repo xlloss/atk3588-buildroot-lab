@@ -1,0 +1,12 @@
+{
+  "name": "ATK-RK3588 Buildroot Cloud Lab",
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu-22.04",
+  "postCreateCommand": "sudo apt-get update && sudo apt-get install -y build-essential gcc g++ make libncurses-dev bison flex libssl-dev bc cpio unzip rsync file wget python3 git && chmod +x setup_cloud.sh",
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "bash"
+      }
+    }
+  }
+}
