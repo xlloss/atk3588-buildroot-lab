@@ -39,11 +39,11 @@ for cmd in wget tar gzip make gcc g++; do
     command -v "${cmd}" >/dev/null 2>&1 || error "系統缺少必要指令 '${cmd}'，請確認 devcontainer 或系統依賴已安裝完成。"
 done
 
-# 檢查剩餘磁碟空間（至少需保留 12GB 供解壓與編譯）
+# 檢查剩餘磁碟空間（至少需保留 8GB 供解壓與編譯）
 FREE_KB=$(df -k "${SCRIPT_DIR}" | awk 'NR==2 {print $4}')
 FREE_GB=$((FREE_KB / 1024 / 1024))
-if [[ "${FREE_GB}" -lt 12 ]]; then
-    error "目前磁碟剩餘空間僅 ${FREE_GB}GB（建議至少 12GB），可能導致編譯中斷！請清理無用容器或檔案後再試。"
+if [[ "${FREE_GB}" -lt 8 ]]; then
+    error "目前磁碟剩餘空間僅 ${FREE_GB}GB（建議至少 8GB），可能導致編譯中斷！請清理無用容器或檔案後再試。"
 fi
 info "磁碟空間檢查通過（剩餘可用：${FREE_GB}GB）。"
 
