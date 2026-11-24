@@ -8,13 +8,11 @@ set -euo pipefail
 
 # 請將上傳至 GitHub Release 或 雲端空間的直接下載網址填入下方：
 TOOLCHAIN_URL="https://github.com/xlloss/atk3588-buildroot-lab/releases/download/v1.0/atk-dlrk3588-toolchain-aarch64-buildroot-linux-gnu-x86_64.run"
-DL_TAR_URL="https://github.com/xlloss/atk3588-buildroot-lab/releases/download/v1.0/lite_dl.tgz"
 
 # 目標目錄設定（對應 defconfig 中的 $(TOPDIR)/toolchain/atk-dlrk3588-toolchain）
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 BUILDROOT_DIR="${SCRIPT_DIR}/buildroot"
 TOOLCHAIN_DIR="${BUILDROOT_DIR}/toolchain/atk-dlrk3588-toolchain"
-DL_DIR="${BUILDROOT_DIR}/dl"
 TMP_DIR="/tmp/atk3588_setup"
 DEFCONFIG_NAME="rockchip_atk_dlrk3588_lite_defconfig"
 
@@ -34,10 +32,6 @@ info "開始檢查雲端工作區環境..."
 [[ -d "${BUILDROOT_DIR}" ]] || error "找不到 buildroot/ 目錄！請確認您在倉庫根目錄執行此腳本。"
 [[ -f "${BUILDROOT_DIR}/configs/${DEFCONFIG_NAME}" ]] || error "找不到配置檔 buildroot/configs/${DEFCONFIG_NAME}！"
 
-# 檢查是否忘記替換預設佔位網址
-if [[ "${TOOLCHAIN_URL}" == *"<你的帳號>"* ]] || [[ "${DL_TAR_URL}" == *"<你的帳號>"* ]]; then
-    error "尚未設定下載網址！請先編輯 setup_cloud.sh，將 TOOLCHAIN_URL 與 DL_TAR_URL 替換為實際的 GitHub Release 下載連結。"
-fi
 
 # 檢查必要系統指令是否存在
 for cmd in wget tar gzip make gcc g++; do
@@ -58,7 +52,7 @@ if grep -q "/opt/atk-dlrk3588-toolchain" "${BUILDROOT_DIR}/configs/${DEFCONFIG_N
     sed -i 's|/opt/atk-dlrk3588-toolchain|$(TOPDIR)/toolchain/atk-dlrk3588-toolchain|g' "${BUILDROOT_DIR}/configs/${DEFCONFIG_NAME}"
 fi
 
-mkdir -p "${TMP_DIR}"
+mkdir -p "${TMP_DIR}" "${DL_DIR}"
 
 # ------------------------- 3. 下載並安裝正點原子工具鏈 -------------------------
 GCC_BIN="${TOOLCHAIN_DIR}/bin/aarch64-buildroot-linux-gnu-gcc"
@@ -94,25 +88,7 @@ else
 fi
 
 # ------------------------- 4. 下載並解壓精簡版 dl 套件包 -------------------------
-if [[ -d "${DL_DIR}" ]] && [[ "$(ls -A "${DL_DIR}" 2>/dev/null | wc -l)" -gt 10 ]]; then
-    info "偵測到 buildroot/dl/ 目錄已有快取套件，跳過重複下載。"
-else
-    info "download lite_dl.tgz..."
-    DL_TAR="${TMP_DIR}/lite_dl.tgz"
-    wget -c --tries=3 --timeout=30 "${DL_TAR_URL}" -O "${DL_TAR}" || error "lite_dl.tgz 下載失敗！請檢查 DL_TAR_URL 是否有效。"
 
-    # 測試壓縮包完整性，避免解壓到一半報錯
-    info "正在驗證 lite_dl.tgz 完整性..."
-    gzip -t "${DL_TAR}" || { rm -f "${DL_TAR}"; error "lite_dl.tgz 檔案損毀或不完整，已刪除 請重新執行腳本"; }
-
-    mkdir -p "${DL_DIR}"
-    info "正在解壓套件包至 ${DL_DIR}..."
-    tar -xzf "${DL_TAR}" -C "${DL_DIR}" || error "解壓 lite_dl.tgz 失敗"
-    rm -f "${DL_TAR}"
-    info "精簡版 dl 套件包 OK"
-fi
-
-# ------------------------- 5. 自動載入 defconfig 並顯示後續指引 -------------------------
 info "正在載入預設配置 ${DEFCONFIG_NAME}..."
 make -C "${BUILDROOT_DIR}" "${DEFCONFIG_NAME}"
 
