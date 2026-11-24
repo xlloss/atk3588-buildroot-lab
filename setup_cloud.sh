@@ -7,7 +7,7 @@
 set -euo pipefail
 
 # 請將上傳至 GitHub Release 或 雲端空間的直接下載網址填入下方：
-TOOLCHAIN_URL="https://github.com/xlloss/atk3588-buildroot-lab/releases/download/v1.0/atk-dlrk3588-toolchain-aarch64-buildroot-linux-gnu-x86_64.run"
+TOOLCHAIN_URL="https://github.com/xlloss/atk3588-buildroot-lab/releases/download/v1.0/atk-dlrk3588-toolchain-aarch64-buildroot-linux-gnu-x86_64_5_10_r6-20240506-v1.0.run"
 
 # 目標目錄設定（對應 defconfig 中的 $(TOPDIR)/toolchain/atk-dlrk3588-toolchain）
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
