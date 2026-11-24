@@ -14,6 +14,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 BUILDROOT_DIR="${SCRIPT_DIR}/buildroot"
 TOOLCHAIN_DIR="${BUILDROOT_DIR}/toolchain/atk-dlrk3588-toolchain"
 TMP_DIR="/tmp/atk3588_setup"
+DL_DIR="${BUILDROOT_DIR}/dl"
 DEFCONFIG_NAME="rockchip_atk_dlrk3588_lite_defconfig"
 
 RED='\033[0;31m'
